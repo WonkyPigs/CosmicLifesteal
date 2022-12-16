@@ -1,0 +1,7 @@
+dev\wonkypigs\cosmiclifesteal\Listeners\PlayerJoinListener.class
+dev\wonkypigs\cosmiclifesteal\CosmicLifesteal.class
+dev\wonkypigs\cosmiclifesteal\Helpers\LifestealTabCompleter.class
+dev\wonkypigs\cosmiclifesteal\Helpers\HealthHelper.class
+dev\wonkypigs\cosmiclifesteal\Commands\LifestealCommand.class
+dev\wonkypigs\cosmiclifesteal\Helpers\DeathEventHelper.class
+dev\wonkypigs\cosmiclifesteal\Listeners\PlayerDeathListener.class

@@ -1,0 +1,14 @@
+name: CosmicLifesteal
+version: '1.0'
+main: dev.wonkypigs.cosmiclifesteal.CosmicLifesteal
+api-version: 1.13
+prefix: CosmicLifesteal
+authors: [ WonkyPigs ]
+description: A very highly configurable LifeSteal plugin that has all the features you need!
+website: wonkypigs.dev
+commands:
+  lifesteal:
+    usage: /lifesteal <reload/hearts> [<add/remove/set/get>] [<player>] [<amount>]
+    description: The main command for CosmicLifesteal
+    aliases: [ ls, cosmiclifesteal ]
+    permission: lifesteal.command

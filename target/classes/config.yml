@@ -1,0 +1,60 @@
+##############################
+##### LIFESTEAL SETTINGS #####
+##############################
+
+messages:
+  prefix: "&8[&d&lCosmic&c&lLifesteal&8] &7"
+
+  message-on-death: "{prefix}&cYou have lost {hearts} hearts!"
+  message-on-kill: "{prefix}&aYou have gained {hearts} hearts!"
+  death-ban-message: "&c&lDEATH BAN\n&bYou can rejoin in {time} minutes!"
+
+  must-be-player: "{prefix}&cYou must be a player to use this command!"
+  no-permission: "{prefix}&cYou do not have permission to use this command!"
+  invalid-player: "{prefix}&cInvalid player!"
+  invalid-arguments: "{prefix}&cInvalid arguments!"
+
+  hearts-added: "{prefix}&aAdded {amount} hearts to {player}"
+  hearts-removed: "{prefix}&cRemoved {amount} hearts from {player}"
+  hearts-set: "{prefix}&aSet {player}'s hearts to {amount}"
+  hearts-get: "{prefix}&a{player} has {amount} hearts"
+
+settings:
+
+  starting-hearts: 10 # how many hearts will every player start off with?
+  hearts-after-deathban: 10 # how many hearts will a player have after recovering from a death ban?
+  max-hearts: 25 # players can't go above this amount of hearts
+
+  hearts-lost-on-death: 1 # how many hearts will a player loose when they are killed by another player
+  hearts-gained-on-kill: 1  # how many hearts will a player gain when they kill another player
+
+  death-ban-time: 30 # how many minutes the player will be banned for when they loose all their hearts
+  death-ban-broadcast: true # send a broadcast message when a player gets death banned?
+  death-ban-broadcast-message: "{prefix}&c{player} has been death banned! &c&lR.I.P"
+
+  enable-head-drops: true # should players drop their head when they die?
+  dropped_head_name: "&dHead of {player}"
+  dropped_head_lore:
+    - "&cKilled by {killer}"
+    - "&7 "
+    - "&7{time_of_death}"
+
+  disabled_worlds: # the worlds where the plugin will be disabled
+    - world_nether
+    - world_the_end
+
+##############################
+########## DATABASE ##########
+##############################
+
+database:
+  type: "sqlite" # sqlite OR mysql
+  # 'sqlite' will store all data in a local .db file
+  # 'mysql' will attempt to connect to your mysql database with the given credentials
+
+  # required for mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: username
+  password: pass
+  database: cosmiclifesteal
