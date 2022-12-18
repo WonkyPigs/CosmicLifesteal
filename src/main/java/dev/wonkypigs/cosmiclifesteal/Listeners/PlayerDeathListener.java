@@ -42,7 +42,8 @@ public class PlayerDeathListener implements Listener {
                 killer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getConfig().getInt("settings.max-hearts")*2);
                 killer.sendMessage(plugin.getConfig().getString("messages.message-on-kill")
                         .replace("{prefix}", plugin.prefix)
-                        .replace("{hearts}", String.valueOf((plugin.getConfig().getInt("settings.max-hearts")*2 - killerHealth)/2)));
+                        .replace("{hearts}", String.valueOf((int) (plugin.getConfig().getInt("settings.max-hearts")*2 - killerHealth)/2))
+                        .replace("&", "§"));
                 DeathEventHelper.setHearts(killer, plugin.getConfig().getInt("settings.max-hearts"));
             } else {
                 killer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(killerHealth + healthGained);

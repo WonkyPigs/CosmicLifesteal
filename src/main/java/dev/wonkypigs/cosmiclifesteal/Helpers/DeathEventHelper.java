@@ -78,6 +78,7 @@ public class DeathEventHelper {
                 statement.setLong(2, System.currentTimeMillis());
                 statement.setLong(3, System.currentTimeMillis() + ((long) bantime * 60 * 1000));
                 statement.setInt(4, id + 1);
+                statement.executeUpdate();
 
                 // reset health
                 HealthHelper.resetHearts(player);

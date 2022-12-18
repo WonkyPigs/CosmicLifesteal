@@ -46,6 +46,8 @@ public class PlayerJoinListener implements Listener {
                 statement.setString(1, e.getUniqueId().toString());
                 statement.executeUpdate();
                 return false;
+            } else {
+                return true;
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

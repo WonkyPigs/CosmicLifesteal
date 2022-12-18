@@ -1,6 +1,6 @@
-##############################
-##### LIFESTEAL SETTINGS #####
-##############################
+#############################
+###### PLUGIN MESSAGES ######
+#############################
 
 messages:
   prefix: "&8[&d&lCosmic&c&lLifesteal&8] &7"
@@ -18,6 +18,15 @@ messages:
   hearts-removed: "{prefix}&cRemoved {amount} hearts from {player}"
   hearts-set: "{prefix}&aSet {player}'s hearts to {amount}"
   hearts-get: "{prefix}&a{player} has {amount} hearts"
+
+  is-death-banned: "{prefix}&c{player} is currently death banned."
+  is-not-death-banned: "{prefix}&a{player} is not death banned."
+  death-banned-player: "{prefix}&cYou have death banned {player} for {time} minutes."
+  death-unbanned-player: "{prefix}&aYou have un-banned {player}."
+
+##############################
+##### LIFESTEAL SETTINGS #####
+##############################
 
 settings:
 
@@ -43,6 +52,8 @@ settings:
     - world_nether
     - world_the_end
 
+  check-for-updates: true # check for plugin updates on startup
+
 ##############################
 ########## DATABASE ##########
 ##############################
@@ -58,3 +69,6 @@ database:
   username: username
   password: pass
   database: cosmiclifesteal
+
+#### DO NOT CHANGE ####
+config-version: 1.1 # DO NOT CHANGE THIS OR ELSE THE ENTIRE PLUGIN WILL BREAK

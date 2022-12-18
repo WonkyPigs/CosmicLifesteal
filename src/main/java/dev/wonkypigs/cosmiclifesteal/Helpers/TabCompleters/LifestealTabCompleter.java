@@ -1,4 +1,4 @@
-package dev.wonkypigs.cosmiclifesteal.Helpers;
+package dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;

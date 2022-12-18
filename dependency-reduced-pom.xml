@@ -4,7 +4,7 @@
   <groupId>dev.wonkypigs</groupId>
   <artifactId>CosmicLifesteal</artifactId>
   <name>CosmicLifesteal</name>
-  <version>1.0</version>
+  <version>1.1</version>
   <description>A very highly configurable LifeSteal plugin that has all the features you need!</description>
   <url>wonkypigs.dev</url>
   <build>
@@ -53,6 +53,10 @@
     <repository>
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>maven-central</id>
+      <url>https://oss.sonatype.org/content/groups/public</url>
     </repository>
   </repositories>
   <dependencies>

@@ -10,5 +10,9 @@ commands:
   lifesteal:
     usage: /lifesteal <reload/hearts> [<add/remove/set/get>] [<player>] [<amount>]
     description: The main command for CosmicLifesteal
-    aliases: [ ls, cosmiclifesteal ]
+    aliases: [cosmiclifesteal ]
     permission: lifesteal.command
+  deathban:
+    usage: /deathban <ban/unban/check> <player>
+    description: Forcefully give/remove a player's deathban
+    permission: lifesteal.deathban

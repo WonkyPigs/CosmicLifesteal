@@ -4,6 +4,7 @@ import dev.wonkypigs.cosmiclifesteal.CosmicLifesteal;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ public class HealthHelper {
 
     private static final CosmicLifesteal plugin = CosmicLifesteal.getInstance();
 
-    public static void addHearts(Player player, OfflinePlayer target, double am) {
+    public static void addHearts(CommandSender player, OfflinePlayer target, double am) {
         int amount = (int) Math.floor(am);
         if (!player.hasPermission("lifesteal.command.hearts.add")) {
             player.sendMessage(plugin.noPermMessage);
@@ -67,7 +68,7 @@ public class HealthHelper {
         });
     }
 
-    public static void removeHearts(Player player, OfflinePlayer target, double am) {
+    public static void removeHearts(CommandSender player, OfflinePlayer target, double am) {
         int amount = (int) Math.floor(am);
         if (!player.hasPermission("lifesteal.command.hearts.remove")) {
             player.sendMessage(plugin.noPermMessage);
@@ -120,7 +121,7 @@ public class HealthHelper {
         });
     }
 
-    public static void setHearts(Player player, OfflinePlayer target, double am) {
+    public static void setHearts(CommandSender player, OfflinePlayer target, double am) {
         int amount = (int) Math.floor(am);
         if (!player.hasPermission("lifesteal.command.hearts.set")) {
             player.sendMessage(plugin.noPermMessage);
@@ -171,7 +172,7 @@ public class HealthHelper {
 
     }
 
-    public static void getHearts(Player player, OfflinePlayer target) {
+    public static void getHearts(CommandSender player, OfflinePlayer target) {
         if (!player.hasPermission("lifesteal.command.hearts.get")) {
             player.sendMessage(plugin.noPermMessage);
             return;

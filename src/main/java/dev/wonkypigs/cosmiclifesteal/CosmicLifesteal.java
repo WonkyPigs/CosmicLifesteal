@@ -1,6 +1,9 @@
 package dev.wonkypigs.cosmiclifesteal;
+import com.tchristofferson.configupdater.ConfigUpdater;
+import dev.wonkypigs.cosmiclifesteal.Commands.DeathbanCommand;
 import dev.wonkypigs.cosmiclifesteal.Commands.LifestealCommand;
-import dev.wonkypigs.cosmiclifesteal.Helpers.LifestealTabCompleter;
+import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.DeathbanTabCompleter;
+import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.LifestealTabCompleter;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerDeathListener;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerJoinListener;
 import org.bstats.bukkit.Metrics;
@@ -13,13 +16,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public final class CosmicLifesteal extends JavaPlugin {
 
     private static CosmicLifesteal instance;{ instance = this; }
     private Connection connection;
     public String host, database, username, password, prefix;
-    public String noPermMessage, bePlayerMessage, invalidPlayerMessage, invalidArgumentsMessage, messageOnDeath, messageOnKill, lifestealForHelp;
+    public String noPermMessage, bePlayerMessage, invalidPlayerMessage, invalidArgumentsMessage, messageOnDeath, messageOnKill, lifestealForHelp, deathbanForHelp;
     public int port;
 
     @Override
@@ -27,6 +31,29 @@ public final class CosmicLifesteal extends JavaPlugin {
         // Plugin startup logic
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+
+        // if config version is old, update it to current version
+        File configFile = new File(getDataFolder(), "config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+
+        if (config.getDouble("config-version") != 1.1) {
+            config.set("config-version", 1.1);
+            try {
+                ConfigUpdater.update(this, "config.yml", configFile, Arrays.asList("none"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            // save changes
+            try {
+                config.save(configFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            // reload config
+            reloadConfig();
+            getLogger().info("Updated config file to latest version");
+        }
+
         registerCommands();
         registerListeners();
         registerPermissions();
@@ -34,9 +61,11 @@ public final class CosmicLifesteal extends JavaPlugin {
         getConfigValues();
         setupMessages();
 
+        UpdateChecker updateChecker = new UpdateChecker();
+        updateChecker.check();
+
         int pluginId = 17076; // <-- Replace with the id of your plugin!
         Metrics metrics = new Metrics(this, pluginId);
-
     }
 
     @Override
@@ -46,12 +75,16 @@ public final class CosmicLifesteal extends JavaPlugin {
         // Registering all plugin commands
         getServer().getPluginCommand("lifesteal").setExecutor(new LifestealCommand());
         getCommand("lifesteal").setTabCompleter(new LifestealTabCompleter());
+
+        getServer().getPluginCommand("deathban").setExecutor(new DeathbanCommand());
+        getCommand("deathban").setTabCompleter(new DeathbanTabCompleter());
     }
 
     public void registerListeners() {
         // Registering all plugin listeners
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
     }
 
     public void registerPermissions() {
@@ -63,6 +96,11 @@ public final class CosmicLifesteal extends JavaPlugin {
         getServer().getPluginManager().addPermission(new Permission("lifesteal.command.hearts.remove"));
         getServer().getPluginManager().addPermission(new Permission("lifesteal.command.hearts.set"));
         getServer().getPluginManager().addPermission(new Permission("lifesteal.command.hearts.get"));
+
+        getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban"));
+        getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.ban"));
+        getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.unban"));
+        getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.check"));
     }
 
     public void getConfigValues() {
@@ -103,6 +141,7 @@ public final class CosmicLifesteal extends JavaPlugin {
                 .replace("{hearts}", String.valueOf(getConfig().getInt("settings.hearts-gained-on-kill")))
                 .replace("&", "§");
         lifestealForHelp = "&cUnknown command. Type /lifesteal for help.".replace("&", "§");
+        deathbanForHelp = "&cUnknown command. Type /deathban for help.".replace("&", "§");
     }
 
     public void mySqlSetup() {

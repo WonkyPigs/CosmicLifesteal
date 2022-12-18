@@ -1,5 +1,5 @@
 name: CosmicLifesteal
-version: '1.0'
+version: '1.1'
 main: dev.wonkypigs.cosmiclifesteal.CosmicLifesteal
 api-version: 1.13
 prefix: CosmicLifesteal
@@ -10,5 +10,9 @@ commands:
   lifesteal:
     usage: /lifesteal <reload/hearts> [<add/remove/set/get>] [<player>] [<amount>]
     description: The main command for CosmicLifesteal
-    aliases: [ ls, cosmiclifesteal ]
+    aliases: [cosmiclifesteal ]
     permission: lifesteal.command
+  deathban:
+    usage: /deathban <ban/unban/check> <player>
+    description: Forcefully give/remove a player's deathban
+    permission: lifesteal.deathban
