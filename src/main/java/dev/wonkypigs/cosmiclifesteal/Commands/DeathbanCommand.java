@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import static dev.wonkypigs.cosmiclifesteal.Helpers.DeathbanHelper.*;
 
@@ -20,6 +21,7 @@ public class DeathbanCommand implements CommandExecutor {
                 sender.sendMessage("&c/deathban ban &7<player>".replace("&", "§"));
                 sender.sendMessage("&c/deathban unban &7<player>".replace("&", "§"));
                 sender.sendMessage("&c/deathban check &7<player>".replace("&", "§"));
+                sender.sendMessage("&c/deathban history &7<player>".replace("&", "§"));
                 sender.sendMessage("&7Try /lifesteal for more commands".replace("&", "§"));
                 sender.sendMessage("&a&m----------------------------------------".replace("&", "§"));
             } else if (args.length > 1) {
@@ -38,6 +40,13 @@ public class DeathbanCommand implements CommandExecutor {
                         unDeathban(sender, target);
                     } else if (args[0].equalsIgnoreCase("check")) {
                         checkDeathban(sender, target);
+                    } else if (args[0].equalsIgnoreCase("history")) {
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            deathbanHistory(player, target, 1);
+                        } else {
+                            sender.sendMessage(plugin.bePlayerMessage);
+                        }
                     } else {
                         sender.sendMessage(plugin.invalidArgumentsMessage);
                     }

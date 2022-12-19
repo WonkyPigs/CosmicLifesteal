@@ -24,6 +24,8 @@ messages:
   death-banned-player: "{prefix}&cYou have death banned {player} for {time} minutes."
   death-unbanned-player: "{prefix}&aYou have un-banned {player}."
 
+  no-deathban-history: "{prefix}&c{player} has no deathban history."
+
 ##############################
 ##### LIFESTEAL SETTINGS #####
 ##############################

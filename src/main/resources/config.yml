@@ -24,6 +24,8 @@ messages:
   death-banned-player: "{prefix}&cYou have death banned {player} for {time} minutes."
   death-unbanned-player: "{prefix}&aYou have un-banned {player}."
 
+  no-deathban-history: "{prefix}&c{player} has no deathban history."
+
 ##############################
 ##### LIFESTEAL SETTINGS #####
 ##############################
@@ -71,4 +73,4 @@ database:
   database: cosmiclifesteal
 
 #### DO NOT CHANGE ####
-config-version: 1.1 # DO NOT CHANGE THIS OR ELSE THE ENTIRE PLUGIN WILL BREAK
+config-version: 1.2 # DO NOT CHANGE THIS OR ELSE THE ENTIRE PLUGIN WILL BREAK

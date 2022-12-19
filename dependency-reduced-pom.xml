@@ -4,7 +4,7 @@
   <groupId>dev.wonkypigs</groupId>
   <artifactId>CosmicLifesteal</artifactId>
   <name>CosmicLifesteal</name>
-  <version>1.1</version>
+  <version>1.2</version>
   <description>A very highly configurable LifeSteal plugin that has all the features you need!</description>
   <url>wonkypigs.dev</url>
   <build>

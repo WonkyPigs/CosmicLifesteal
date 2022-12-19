@@ -7,5 +7,6 @@ dev\wonkypigs\cosmiclifesteal\Helpers\DeathbanHelper.class
 dev\wonkypigs\cosmiclifesteal\Listeners\PlayerDeathListener.class
 dev\wonkypigs\cosmiclifesteal\Commands\DeathbanCommand.class
 dev\wonkypigs\cosmiclifesteal\Helpers\HealthHelper.class
+dev\wonkypigs\cosmiclifesteal\Listeners\HistoryMenuListener.class
 dev\wonkypigs\cosmiclifesteal\Helpers\DeathEventHelper.class
 dev\wonkypigs\cosmiclifesteal\UpdateChecker.class

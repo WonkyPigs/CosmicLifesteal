@@ -4,6 +4,7 @@ import dev.wonkypigs.cosmiclifesteal.Commands.DeathbanCommand;
 import dev.wonkypigs.cosmiclifesteal.Commands.LifestealCommand;
 import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.DeathbanTabCompleter;
 import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.LifestealTabCompleter;
+import dev.wonkypigs.cosmiclifesteal.Listeners.HistoryMenuListener;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerDeathListener;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerJoinListener;
 import org.bstats.bukkit.Metrics;
@@ -36,8 +37,8 @@ public final class CosmicLifesteal extends JavaPlugin {
         File configFile = new File(getDataFolder(), "config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-        if (config.getDouble("config-version") != 1.1) {
-            config.set("config-version", 1.1);
+        if (config.getDouble("config-version") != 1.2) {
+            config.set("config-version", 1.2);
             try {
                 ConfigUpdater.update(this, "config.yml", configFile, Arrays.asList("none"));
             } catch (IOException e) {
@@ -84,6 +85,7 @@ public final class CosmicLifesteal extends JavaPlugin {
         // Registering all plugin listeners
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new HistoryMenuListener(), this);
         getServer().getPluginManager().registerEvents(new UpdateChecker(), this);
     }
 
@@ -101,6 +103,7 @@ public final class CosmicLifesteal extends JavaPlugin {
         getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.ban"));
         getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.unban"));
         getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.check"));
+        getServer().getPluginManager().addPermission(new Permission("lifesteal.deathban.history"));
     }
 
     public void getConfigValues() {
