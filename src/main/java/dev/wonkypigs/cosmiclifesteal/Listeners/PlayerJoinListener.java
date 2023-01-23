@@ -70,7 +70,7 @@ public class PlayerJoinListener implements Listener {
             int minutesLeft = (int) (timeLeft / 1000 / 60);
 
             // kick
-            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, plugin.getConfig().getString("messages.death-ban-message")
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, plugin.getConfig().getString("death-ban-message")
                     .replace("{time}", String.valueOf(minutesLeft))
                     .replace("&", "§"));
 
@@ -91,11 +91,11 @@ public class PlayerJoinListener implements Listener {
                     int hearts = resultSet.getInt("HEARTS");
                     player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(hearts*2);
                 } else {
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getConfig().getInt("settings.starting-hearts")*2);
+                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getConfig().getInt("starting-hearts")*2);
                     statement = plugin.getConnection()
                             .prepareStatement("INSERT INTO hearts (UUID, HEARTS) VALUES (?, ?)");
                     statement.setString(1, player.getUniqueId().toString());
-                    statement.setInt(2, plugin.getConfig().getInt("settings.starting-hearts"));
+                    statement.setInt(2, plugin.getConfig().getInt("starting-hearts"));
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {

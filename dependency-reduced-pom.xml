@@ -4,7 +4,7 @@
   <groupId>dev.wonkypigs</groupId>
   <artifactId>CosmicLifesteal</artifactId>
   <name>CosmicLifesteal</name>
-  <version>1.2</version>
+  <version>1.3</version>
   <description>A very highly configurable LifeSteal plugin that has all the features you need!</description>
   <url>wonkypigs.dev</url>
   <build>
@@ -55,8 +55,8 @@
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
-      <id>maven-central</id>
-      <url>https://oss.sonatype.org/content/groups/public</url>
+      <id>placeholderapi</id>
+      <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -81,6 +81,18 @@
         <exclusion>
           <artifactId>snakeyaml</artifactId>
           <groupId>org.yaml</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>me.clip</groupId>
+      <artifactId>placeholderapi</artifactId>
+      <version>2.11.2</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>annotations</artifactId>
+          <groupId>org.jetbrains</groupId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -10,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.xml.transform.Result;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,8 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class DeathbanHelper {
@@ -75,7 +74,7 @@ public class DeathbanHelper {
                     // kick
                     if (target.isOnline()) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
-                            target.getPlayer().kickPlayer(plugin.getConfig().getString("messages.death-ban-message")
+                            target.getPlayer().kickPlayer(plugin.getConfig().getString("death-ban-message")
                                     .replace("{time}", String.valueOf(bantime))
                                     .replace("&", "§"));
                         });
@@ -83,13 +82,13 @@ public class DeathbanHelper {
 
                     // broadcast
                     if (plugin.getConfig().getBoolean("settings.death-ban-broadcast")) {
-                        Bukkit.broadcastMessage(plugin.getConfig().getString("settings.death-ban-broadcast-message")
+                        Bukkit.broadcastMessage(plugin.getConfig().getString("death-ban-broadcast-message")
                                 .replace("{prefix}", plugin.prefix)
                                 .replace("{player}", target.getName())
                                 .replace("&", "§"));
                     }
 
-                    sender.sendMessage(plugin.getConfig().getString("messages.death-banned-player")
+                    sender.sendMessage(plugin.getConfig().getString("death-banned-player-message")
                             .replace("{prefix}", plugin.prefix)
                             .replace("{player}", target.getName())
                             .replace("{time}", String.valueOf(bantime))
@@ -136,7 +135,7 @@ public class DeathbanHelper {
                         statement.executeUpdate();
                     }
 
-                    sender.sendMessage(plugin.getConfig().getString("messages.death-unbanned-player")
+                    sender.sendMessage(plugin.getConfig().getString("death-unbanned-player-message")
                             .replace("{prefix}", plugin.prefix)
                             .replace("{player}", target.getName())
                             .replace("&", "§"));
@@ -147,6 +146,29 @@ public class DeathbanHelper {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static Integer getDeathbanAmount(Player target) {
+        CompletableFuture<Integer> future = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                PreparedStatement statement = plugin.getConnection()
+                        .prepareStatement("SELECT COUNT(*) FROM deathban_history WHERE UUID = ?");
+                statement.setString(1, target.getUniqueId().toString());
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    future.complete(resultSet.getInt(1));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void checkDeathban(CommandSender sender, OfflinePlayer target) {
@@ -166,18 +188,18 @@ public class DeathbanHelper {
                     // if expiry already gone
                     int expiry = result.getInt("EXPIRY");
                     if (expiry < System.currentTimeMillis()) {
-                        sender.sendMessage(plugin.getConfig().getString("messages.is-death-banned")
+                        sender.sendMessage(plugin.getConfig().getString("is-death-banned-message")
                                 .replace("{prefix}", plugin.prefix)
                                 .replace("{player}", target.getName())
                                 .replace("&", "§"));
                     } else {
-                        sender.sendMessage(plugin.getConfig().getString("messages.is-not-death-banned")
+                        sender.sendMessage(plugin.getConfig().getString("is-not-death-banned-message")
                                 .replace("{prefix}", plugin.prefix)
                                 .replace("{player}", target.getName())
                                 .replace("&", "§"));
                     }
                 } else {
-                    sender.sendMessage(plugin.getConfig().getString("messages.is-not-death-banned")
+                    sender.sendMessage(plugin.getConfig().getString("is-not-death-banned-message")
                             .replace("{prefix}", plugin.prefix)
                             .replace("{player}", target.getName())
                             .replace("&", "§"));

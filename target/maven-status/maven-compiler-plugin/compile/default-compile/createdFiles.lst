@@ -1,11 +1,11 @@
-dev\wonkypigs\cosmiclifesteal\Helpers\TabCompleters\DeathbanTabCompleter.class
 dev\wonkypigs\cosmiclifesteal\Listeners\PlayerJoinListener.class
-dev\wonkypigs\cosmiclifesteal\Helpers\TabCompleters\LifestealTabCompleter.class
 dev\wonkypigs\cosmiclifesteal\CosmicLifesteal.class
 dev\wonkypigs\cosmiclifesteal\Commands\LifestealCommand.class
 dev\wonkypigs\cosmiclifesteal\Helpers\DeathbanHelper.class
 dev\wonkypigs\cosmiclifesteal\Listeners\PlayerDeathListener.class
+dev\wonkypigs\cosmiclifesteal\Placeholders\PlaceholderManager.class
 dev\wonkypigs\cosmiclifesteal\Commands\DeathbanCommand.class
+dev\wonkypigs\cosmiclifesteal\ConfigUpdater.class
 dev\wonkypigs\cosmiclifesteal\Helpers\HealthHelper.class
 dev\wonkypigs\cosmiclifesteal\Listeners\HistoryMenuListener.class
 dev\wonkypigs\cosmiclifesteal\Helpers\DeathEventHelper.class

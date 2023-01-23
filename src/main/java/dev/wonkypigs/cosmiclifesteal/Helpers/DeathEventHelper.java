@@ -24,7 +24,7 @@ public class DeathEventHelper {
         Timestamp timeOfDeath = new Timestamp(System.currentTimeMillis());
         String timeOfDeathString = timeOfDeath.toString().substring(8, 10) + "/" + timeOfDeath.toString().substring(5, 7) + "/" + timeOfDeath.toString().substring(0, 4) + " " + timeOfDeath.toString().substring(11, 19);
 
-        headMeta.setDisplayName(plugin.getConfig().getString("settings.dropped_head_name")
+        headMeta.setDisplayName(plugin.getConfig().getString("dropped-head-name")
                 .replace("{player}", player.getName())
                 .replace("{killer}", killer.getName())
                 .replace("{time_of_death}", timeOfDeathString)
@@ -35,11 +35,11 @@ public class DeathEventHelper {
 
         // set lore
         ArrayList<String> lore = new ArrayList<>();
-        for (String line : plugin.getConfig().getStringList("settings.dropped_head_lore")) {
+        for (String line : plugin.getConfig().getStringList("dropped-head-lore")) {
             lore.add(line
                     .replace("{player}", player.getName())
                     .replace("{killer}", killer.getName())
-                    .replace("{time_of_death}", String.valueOf(timeOfDeathString))
+                    .replace("{time_of_death}", timeOfDeathString)
                     .replace("&", "§"));
         }
 
@@ -52,7 +52,7 @@ public class DeathEventHelper {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 PreparedStatement statement = null;
-                int bantime = plugin.getConfig().getInt("settings.death-ban-time");
+                int bantime = plugin.getConfig().getInt("death-ban-time");
 
                 // get last deathban id of player
                 statement = plugin.getConnection()
@@ -85,14 +85,14 @@ public class DeathEventHelper {
 
                 // kick
                 Bukkit.getScheduler().runTask(plugin, () -> {
-                    player.kickPlayer(plugin.getConfig().getString("messages.death-ban-message")
+                    player.kickPlayer(plugin.getConfig().getString("death-ban-message")
                             .replace("{time}", String.valueOf(bantime))
                             .replace("&", "§"));
                 });
 
                 // broadcast
-                if (plugin.getConfig().getBoolean("settings.death-ban-broadcast")) {
-                    Bukkit.broadcastMessage(plugin.getConfig().getString("settings.death-ban-broadcast-message")
+                if (plugin.getConfig().getBoolean("death-ban-broadcast")) {
+                    Bukkit.broadcastMessage(plugin.getConfig().getString("death-ban-broadcast-message")
                             .replace("{prefix}", plugin.prefix)
                             .replace("{player}", player.getName())
                             .replace("&", "§"));

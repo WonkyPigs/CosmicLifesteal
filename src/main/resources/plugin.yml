@@ -6,6 +6,7 @@ prefix: CosmicLifesteal
 authors: [ WonkyPigs ]
 description: A very highly configurable LifeSteal plugin that has all the features you need!
 website: wonkypigs.dev
+softdepend: [PlaceholderAPI]
 commands:
   lifesteal:
     usage: /lifesteal <reload/hearts> [<add/remove/set/get>] [<player>] [<amount>]

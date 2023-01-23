@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 public class HealthHelper {
 
@@ -39,7 +40,7 @@ public class HealthHelper {
                 }
                 int hearts = result.getInt("HEARTS");
 
-                if ((hearts + amount) > plugin.getConfig().getInt("settings.max-hearts")) {
+                if ((hearts + amount) > plugin.getConfig().getInt("max-hearts")) {
                     player.sendMessage(plugin.prefix + "§cYou cannot set a player's hearts above " + plugin.getConfig().getInt("settings.max-hearts"));
                     return;
                 }
@@ -56,7 +57,7 @@ public class HealthHelper {
                     p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() + (amount*2));
                 }
 
-                player.sendMessage(plugin.getConfig().getString("messages.hearts-added")
+                player.sendMessage(plugin.getConfig().getString("hearts-added-message")
                         .replace("{prefix}", plugin.prefix)
                         .replace("{player}", target.getName())
                         .replace("{amount}", String.valueOf(amount))
@@ -110,7 +111,7 @@ public class HealthHelper {
                     p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue() - (amount*2));
                 }
 
-                player.sendMessage(plugin.getConfig().getString("messages.hearts-removed")
+                player.sendMessage(plugin.getConfig().getString("hearts-removed-message")
                         .replace("{prefix}", plugin.prefix)
                         .replace("{player}", target.getName())
                         .replace("{amount}", String.valueOf(amount))
@@ -131,7 +132,7 @@ public class HealthHelper {
             player.sendMessage(plugin.prefix + "§cYou cannot set a player's hearts to less than 1!");
             return;
         }
-        else if (amount > plugin.getConfig().getInt("settings.max-hearts")) {
+        else if (amount > plugin.getConfig().getInt("max-hearts")) {
             player.sendMessage(plugin.prefix + "§cYou cannot set a player's hearts above " + plugin.getConfig().getInt("settings.max-hearts"));
             return;
         }
@@ -160,7 +161,7 @@ public class HealthHelper {
                     p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(amount*2);
                 }
 
-                player.sendMessage(plugin.getConfig().getString("messages.hearts-set")
+                player.sendMessage(plugin.getConfig().getString("hearts-set-message")
                         .replace("{prefix}", plugin.prefix)
                         .replace("{player}", target.getName())
                         .replace("{amount}", String.valueOf(amount))
@@ -179,7 +180,7 @@ public class HealthHelper {
         }
         if (target.isOnline()) {
             Player p2 = target.getPlayer();
-            player.sendMessage(plugin.getConfig().getString("messages.hearts-get")
+            player.sendMessage(plugin.getConfig().getString("hearts-get-message")
                     .replace("{prefix}", plugin.prefix)
                     .replace("{player}", target.getName())
                     .replace("{amount}", String.valueOf(p2.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue()/2))
@@ -200,7 +201,7 @@ public class HealthHelper {
                     }
                     int hearts = result.getInt("HEARTS");
 
-                    player.sendMessage(plugin.getConfig().getString("messages.hearts-get")
+                    player.sendMessage(plugin.getConfig().getString("hearts-get-message")
                             .replace("{prefix}", plugin.prefix)
                             .replace("{player}", target.getName())
                             .replace("{amount}", String.valueOf(hearts))
@@ -216,12 +217,12 @@ public class HealthHelper {
         try {
             PreparedStatement statement = plugin.getConnection()
                     .prepareStatement("UPDATE hearts SET HEARTS=? WHERE UUID=?");
-            statement.setInt(1, plugin.getConfig().getInt("settings.hearts-after-deathban"));
+            statement.setInt(1, plugin.getConfig().getInt("hearts-after-deathban"));
             statement.setString(2, player.getUniqueId().toString());
             statement.executeUpdate();
 
             if (player.isOnline()) {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getConfig().getInt("settings.hearts-after-deathban")*2);
+                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(plugin.getConfig().getInt("hearts-after-deathban")*2);
             }
         } catch (SQLException e) {
             e.printStackTrace();

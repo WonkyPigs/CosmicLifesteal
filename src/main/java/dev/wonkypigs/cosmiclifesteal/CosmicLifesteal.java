@@ -1,14 +1,15 @@
 package dev.wonkypigs.cosmiclifesteal;
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.wonkypigs.cosmiclifesteal.Commands.DeathbanCommand;
 import dev.wonkypigs.cosmiclifesteal.Commands.LifestealCommand;
-import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.DeathbanTabCompleter;
-import dev.wonkypigs.cosmiclifesteal.Helpers.TabCompleters.LifestealTabCompleter;
+import dev.wonkypigs.cosmiclifesteal.Helpers.DeathbanHelper;
 import dev.wonkypigs.cosmiclifesteal.Listeners.HistoryMenuListener;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerDeathListener;
 import dev.wonkypigs.cosmiclifesteal.Listeners.PlayerJoinListener;
+import dev.wonkypigs.cosmiclifesteal.Placeholders.PlaceholderManager;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,43 +18,40 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.UUID;
 
 public final class CosmicLifesteal extends JavaPlugin {
 
     private static CosmicLifesteal instance;{ instance = this; }
     private Connection connection;
+    public double confVersion = 1.3;
     public String host, database, username, password, prefix;
     public String noPermMessage, bePlayerMessage, invalidPlayerMessage, invalidArgumentsMessage, messageOnDeath, messageOnKill, lifestealForHelp, deathbanForHelp;
     public int port;
+    public HashMap<UUID, Integer> deathbanAmounts = new HashMap<>();
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        // check for PAPI
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
+            getLogger().warning("------------------------------------");
+            getLogger().warning("PlaceholderAPI not found! Disabling plugin...");
+            getLogger().warning("------------------------------------");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        // register placeholders
+        new PlaceholderManager(this).register();
+
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
         // if config version is old, update it to current version
-        File configFile = new File(getDataFolder(), "config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-
-        if (config.getDouble("config-version") != 1.2) {
-            config.set("config-version", 1.2);
-            try {
-                ConfigUpdater.update(this, "config.yml", configFile, Arrays.asList("none"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // save changes
-            try {
-                config.save(configFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            // reload config
-            reloadConfig();
-            getLogger().info("Updated config file to latest version");
-        }
+        updateConfig();
 
         registerCommands();
         registerListeners();
@@ -61,7 +59,9 @@ public final class CosmicLifesteal extends JavaPlugin {
         mySqlSetup();
         getConfigValues();
         setupMessages();
+        cacheLoop();
 
+        // MISC
         UpdateChecker updateChecker = new UpdateChecker();
         updateChecker.check();
 
@@ -75,10 +75,10 @@ public final class CosmicLifesteal extends JavaPlugin {
     public void registerCommands() {
         // Registering all plugin commands
         getServer().getPluginCommand("lifesteal").setExecutor(new LifestealCommand());
-        getCommand("lifesteal").setTabCompleter(new LifestealTabCompleter());
+        getCommand("lifesteal").setTabCompleter(new LifestealCommand());
 
         getServer().getPluginCommand("deathban").setExecutor(new DeathbanCommand());
-        getCommand("deathban").setTabCompleter(new DeathbanTabCompleter());
+        getCommand("deathban").setTabCompleter(new DeathbanCommand());
     }
 
     public void registerListeners() {
@@ -109,39 +109,74 @@ public final class CosmicLifesteal extends JavaPlugin {
     public void getConfigValues() {
         try {
             File file = new File(getDataFolder(), "config.yml");
-            host = YamlConfiguration.loadConfiguration(file).getString("database.host");
-            port = YamlConfiguration.loadConfiguration(file).getInt("database.port");
-            database = YamlConfiguration.loadConfiguration(file).getString("database.database");
-            username = YamlConfiguration.loadConfiguration(file).getString("database.username");
-            password = YamlConfiguration.loadConfiguration(file).getString("database.password");
-            prefix = YamlConfiguration.loadConfiguration(file).getString("messages.prefix").replace("&", "§");
+            host = YamlConfiguration.loadConfiguration(file).getString("database-host");
+            port = YamlConfiguration.loadConfiguration(file).getInt("database-port");
+            database = YamlConfiguration.loadConfiguration(file).getString("database-database");
+            username = YamlConfiguration.loadConfiguration(file).getString("database-username");
+            password = YamlConfiguration.loadConfiguration(file).getString("database-password");
+            prefix = YamlConfiguration.loadConfiguration(file).getString("prefix").replace("&", "§");
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void updateConfig() {
+
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+
+        if (config.getDouble("config-version") <= 1.2) {
+            // rename config.yml to old-config.yml
+            File oldConfig = new File(getDataFolder(), "old-config.yml");
+            File configFile = new File(getDataFolder(), "config.yml");
+            configFile.renameTo(oldConfig);
+
+            // create new config.yml
+            saveDefaultConfig();
+            getConfig().set("config-version", confVersion);
+            getLogger().severe("==========================");
+            getLogger().info("You were using an old format of");
+            getLogger().info("the config.yml file. It has been");
+            getLogger().info("updated to the current version.");
+            getLogger().info("Make sure to update all values!");
+            getLogger().severe("==========================");
+            return;
+        }
+
+        config = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+
+        if (config.getDouble("config-version") != confVersion) {
+            try {
+                new ConfigUpdater(this, "config.yml", "config-updater.yml").update();
+            } catch (IOException e) {
+                getLogger().severe("Could not update config.yml!");
+                e.printStackTrace();
+            }
+        }
+        reloadConfig();
+    }
+
     public void setupMessages() {
         // Setting up all plugin messages
-        noPermMessage = getConfig().getString("messages.no-permission")
+        noPermMessage = getConfig().getString("no-permission-message")
                 .replace("{prefix}", prefix)
                 .replace("&", "§");
-        bePlayerMessage = getConfig().getString("messages.must-be-player")
+        bePlayerMessage = getConfig().getString("must-be-player-message")
                 .replace("{prefix}", prefix)
                 .replace("&", "§");
-        invalidPlayerMessage = getConfig().getString("messages.invalid-player")
+        invalidPlayerMessage = getConfig().getString("invalid-player-message")
                 .replace("{prefix}", prefix)
                 .replace("&", "§");
-        invalidArgumentsMessage = getConfig().getString("messages.invalid-arguments")
+        invalidArgumentsMessage = getConfig().getString("invalid-arguments-message")
                 .replace("{prefix}", prefix)
                 .replace("&", "§");
-        messageOnDeath = getConfig().getString("messages.message-on-death")
+        messageOnDeath = getConfig().getString("death-message")
                 .replace("{prefix}", prefix)
-                .replace("{hearts}", String.valueOf(getConfig().getInt("settings.hearts-lost-on-death")))
+                .replace("{hearts}", String.valueOf(getConfig().getInt("hearts-lost-on-death")))
                 .replace("&", "§");
-        messageOnKill = getConfig().getString("messages.message-on-kill")
+        messageOnKill = getConfig().getString("kill-message")
                 .replace("{prefix}", prefix)
-                .replace("{hearts}", String.valueOf(getConfig().getInt("settings.hearts-gained-on-kill")))
+                .replace("{hearts}", String.valueOf(getConfig().getInt("hearts-gained-on-kill")))
                 .replace("&", "§");
         lifestealForHelp = "&cUnknown command. Type /lifesteal for help.".replace("&", "§");
         deathbanForHelp = "&cUnknown command. Type /deathban for help.".replace("&", "§");
@@ -154,7 +189,7 @@ public final class CosmicLifesteal extends JavaPlugin {
                     return;
                 }
 
-                if (getConfig().getString("database.type").equalsIgnoreCase("sqlite")) {
+                if (!getConfig().getString("database-type").equalsIgnoreCase("mysql")) {
                     // create local database file and stuff
                     Class.forName("org.sqlite.JDBC");
                     File file = new File(getDataFolder(), "database.db");
@@ -175,7 +210,7 @@ public final class CosmicLifesteal extends JavaPlugin {
                 getLogger().info("Successfully connected to the MySQL database");
             }
         } catch (SQLException | ClassNotFoundException | IOException e) {
-            getLogger().info("Error connecting to the MySQL database");
+            getLogger().warning("Error connecting to the MySQL database");
             e.printStackTrace();
         }
     }
@@ -190,6 +225,24 @@ public final class CosmicLifesteal extends JavaPlugin {
 
     public static CosmicLifesteal getInstance() {
         return instance;
+    }
+
+    // every 5 minutes
+    public void cacheLoop() {
+        // make loop that repeats every 5 mins
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            // loop through all online players
+            for (Player p: Bukkit.getOnlinePlayers()) {
+                UUID uuid = p.getUniqueId();
+                int deathbans = DeathbanHelper.getDeathbanAmount(p);
+
+                if (deathbanAmounts.containsKey(uuid)) {
+                    deathbanAmounts.replace(uuid, deathbans);
+                } else {
+                    deathbanAmounts.put(uuid, deathbans);
+                }
+            }
+        }, 0L, 20 * 60 * 2);
     }
 
 }

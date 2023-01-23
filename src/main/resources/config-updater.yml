@@ -1,0 +1,17 @@
+stringlists:
+  - "^disabled-worlds$"
+  - "^dropped-head-lore$"
+
+ignored:
+  - "^config-version$"
+
+doublequotes:
+  - "(.*)-message$"
+  - "^prefix$"
+  - "^dropped-head-name$"
+  - "^death-ban-broadcast-message$"
+  - "^database-type$"
+  - "^dropped-head-lore$"
+
+escape-newlines:
+  - "^death-ban-message$"
