@@ -1,8 +1,6 @@
 package dev.wonkypigs.cosmiclifesteal.Placeholders;
 
 import dev.wonkypigs.cosmiclifesteal.CosmicLifesteal;
-import dev.wonkypigs.cosmiclifesteal.Helpers.DeathbanHelper;
-import dev.wonkypigs.cosmiclifesteal.Helpers.HealthHelper;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

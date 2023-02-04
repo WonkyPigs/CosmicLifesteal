@@ -229,7 +229,7 @@ public final class CosmicLifesteal extends JavaPlugin {
 
     // every 5 minutes
     public void cacheLoop() {
-        // make loop that repeats every 5 mins
+        // make loop that repeats every 2 mins
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             // loop through all online players
             for (Player p: Bukkit.getOnlinePlayers()) {
